@@ -25,10 +25,10 @@ int main(int argc, char *argv[]) {
                     pnm->inverse();
                     break;
                 case 1:
-                    pnm->reflect_y();
+                    pnm->reflect_x();
                     break;
                 case 2:
-                    pnm->reflect_x();
+                    pnm->reflect_y();
                     break;
                 case 3:
                     pnm->turn(1);
@@ -38,6 +38,7 @@ int main(int argc, char *argv[]) {
                     break;
                 default:
                     cout << "Unkown action\n";
+                    return 0;
             }
         }
         catch (exception e) {

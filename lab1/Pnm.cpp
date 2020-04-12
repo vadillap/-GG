@@ -18,7 +18,7 @@ Pnm::Pnm(std::string path) {
 
     unsigned int byte_per_pixel = type == '6' ? 3 : 1;
 
-    data = (uint8_t *) malloc(sizeof(u_int8_t) * (w * h * byte_per_pixel));
+    data = (uint8_t *) malloc(sizeof(uint8_t) * (w * h * byte_per_pixel));
 
         if (fread(data, byte_per_pixel, w * h, f) != w * h) {
             throw "Read error";
@@ -36,11 +36,13 @@ void Pnm::savePnm(std::string path) {
         throw "File open error";
     }
     if (fprintf(f, "P%c\n%d %d\n%d\n", type, w, h, max_value) < 0) {
+        fclose(f);
         throw "Header write error";
     }
     unsigned int byte_per_pixel = type == '6' ? 3 : 1;
 
     if (fwrite(data, byte_per_pixel , w * h,  f) != w * h) {
+        fclose(f);
         throw "Write error";
     }
     fclose(f);
@@ -57,10 +59,10 @@ void Pnm::inverse() {
 void Pnm::turn(int count) {
     unsigned int byte_per_pixel = type == '6' ? 3 : 1;
 
-    u_int8_t *new_data;
+    uint8_t *new_data;
 
     for (int t = 0; t < count % 4; ++t) {
-        new_data = (uint8_t *) malloc(sizeof(u_int8_t) * (w * h * byte_per_pixel));
+        new_data = (uint8_t *) malloc(sizeof(uint8_t) * (w * h * byte_per_pixel));
         for (int i = 0; i < w; ++i) {
             for (int j = 0; j < h; ++j) {
                 for (int k = 0; k < byte_per_pixel; ++k) {
