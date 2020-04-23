@@ -8,11 +8,11 @@ Pnm::Pnm(std::string path) {
         throw "File open error";
     }
 
-    if (fscanf(f, "P%c\n", &type) != 1 || (type != '5'  && type != '6')) {
+    if (fscanf(f, "P%c\n", &type) != 1 || (type != '5' && type != '6')) {
         throw "File not supported";
     }
 
-    if (fscanf(f, "%d%d%d\n", &w, &h, &max_value) != 3) {
+    if (fscanf(f, "%d%d%hhu\n", &w, &h, &max_value) != 3) {
         throw "Header error";
     }
 
@@ -20,9 +20,14 @@ Pnm::Pnm(std::string path) {
 
     data = (uint8_t *) malloc(sizeof(uint8_t) * (w * h * byte_per_pixel));
 
-        if (fread(data, byte_per_pixel, w * h, f) != w * h) {
-            throw "Read error";
-        }
+    if (fread(data, byte_per_pixel, w * h, f) != w * h) {
+        throw "Read error";
+    }
+
+    if (getc(f) != EOF) {
+        throw "Unexpected data";
+    }
+
     fclose(f);
 }
 
@@ -41,7 +46,7 @@ void Pnm::savePnm(std::string path) {
     }
     unsigned int byte_per_pixel = type == '6' ? 3 : 1;
 
-    if (fwrite(data, byte_per_pixel , w * h,  f) != w * h) {
+    if (fwrite(data, byte_per_pixel, w * h, f) != w * h) {
         fclose(f);
         throw "Write error";
     }
