@@ -18,7 +18,7 @@ private:
 
 
 public:
-    Pnm(std::string path);
+    Pnm(const std::string& path);
 
     ~Pnm();
 

@@ -1,34 +1,63 @@
-#include <iostream>
+#include <fstream>
 #include "Pnm.h"
 
 
-Pnm::Pnm(std::string path) {
-    FILE *f = fopen(path.c_str(), "rb");
-    if (!f) {
+Pnm::Pnm(const std::string &path) {
+    std::ifstream fin(path);
+
+    if (!fin.is_open()) {
         throw "File open error";
     }
 
-    if (fscanf(f, "P%c\n", &type) != 1 || (type != '5' && type != '6')) {
+    std::string s_type, s_w, s_h, s_max_value;
+    fin >> s_type >> s_w >> s_h >> s_max_value;
+
+    if (s_type == "P6" || s_type == "P5") {
+        type = s_type[1];
+    } else {
         throw "File not supported";
     }
-
-    if (fscanf(f, "%d%d%hhu\n", &w, &h, &max_value) != 3) {
+    int tmp_w, tmp_h, tmp_max_value;
+    try {
+        tmp_w = std::stoi(s_w);
+        tmp_h = std::stoi(s_h);
+        tmp_max_value = std::stoi(s_max_value);
+    }
+    catch (std::exception &ex) {
+        throw ex.what();
+    }
+    if (tmp_w < 0 || tmp_h < 0 || tmp_max_value < 0 || tmp_max_value > 255) {
         throw "Header error";
     }
+
+    w = tmp_w;
+    h = tmp_h;
+    max_value = tmp_max_value;
+
+    fin.ignore();
 
     unsigned int byte_per_pixel = type == '6' ? 3 : 1;
 
     data = (uint8_t *) malloc(sizeof(uint8_t) * (w * h * byte_per_pixel));
 
-    if (fread(data, byte_per_pixel, w * h, f) != w * h) {
-        throw "Read error";
+    fin.read(reinterpret_cast<char *>(data), w * h * byte_per_pixel);
+
+    for (int i = 0; i < w * h * byte_per_pixel; ++i) {
+        if (data[i] > max_value) {
+            throw "Pixel value overflow";
+        }
     }
 
-    if (getc(f) != EOF) {
+    if (!fin) {
+        throw "Unexpected end";
+    }
+
+    fin.ignore();
+
+    if (!fin.eof()) {
         throw "Unexpected data";
     }
-
-    fclose(f);
+    fin.close();
 }
 
 Pnm::~Pnm() {
