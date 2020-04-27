@@ -3,7 +3,7 @@
 
 
 Pnm::Pnm(const std::string &path) {
-    std::ifstream fin(path);
+    std::ifstream fin(path, std::ios::binary);
 
     if (!fin.is_open()) {
         throw "File open error";
@@ -34,7 +34,7 @@ Pnm::Pnm(const std::string &path) {
     h = tmp_h;
     max_value = tmp_max_value;
 
-    fin.ignore(1,'\n');
+    fin.ignore(1, '\n');
 
     unsigned int byte_per_pixel = type == '6' ? 3 : 1;
 
@@ -48,7 +48,7 @@ Pnm::Pnm(const std::string &path) {
         }
     }
 
-    if (!fin) {
+    if (fin.eof()) {
         throw "Unexpected end";
     }
 
