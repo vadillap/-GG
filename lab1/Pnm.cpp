@@ -34,7 +34,7 @@ Pnm::Pnm(const std::string &path) {
     h = tmp_h;
     max_value = tmp_max_value;
 
-    fin.ignore();
+    fin.ignore(1,'\n');
 
     unsigned int byte_per_pixel = type == '6' ? 3 : 1;
 
@@ -52,7 +52,7 @@ Pnm::Pnm(const std::string &path) {
         throw "Unexpected end";
     }
 
-    fin.ignore();
+    fin.ignore(1);
 
     if (!fin.eof()) {
         throw "Unexpected data";
