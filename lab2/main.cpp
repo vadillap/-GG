@@ -21,7 +21,6 @@ pair<bool, string> validate(int x0, int y0, int x1, int y1, double thick, double
 }
 
 int main(int argc, char *argv[]) {
-
     if (argc == 9 || argc == 10) {
         string fin, fout;
         int x0, y0, x1, y1, br;
@@ -69,8 +68,6 @@ int main(int argc, char *argv[]) {
             cerr << "file write error:" << ex.what() << '\n';
             return 1;
         }
-        cout << "ok" << '\n';
-
     } else {
         cerr << argv[0] << usage;
     }

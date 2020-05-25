@@ -145,6 +145,10 @@ Pixel PnmFile::getPixel(uint x, uint y, double gamma) {
     return p;
 }
 
+uint PnmFile::getMaxBr() const {
+    return max_value;
+}
+
 Pixel::Pixel(uint8_t r, uint8_t g, uint8_t b) : r(r), g(g), b(b) {}
 
 Pixel Pixel::mix(Pixel other, double alpha) {

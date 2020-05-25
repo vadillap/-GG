@@ -54,6 +54,8 @@ public:
 void drawLine(int x0, int y0, int x1, int y1, PnmFile &pnm, double thick, double gamma, unsigned int br) {
     Line line(Vec(x0, y0), Vec(x1, y1));
 
+    br = floor(pnm.getMaxBr() * std::pow((double) br / pnm.getMaxBr(), gamma));
+
     const double near = sqrt(2) / 2;
     thick -= 1;
     for (int i = 0; i < pnm.getWidth(); ++i) {

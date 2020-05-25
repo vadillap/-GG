@@ -39,6 +39,8 @@ public:
 
     uint getHeight() const;
 
+    uint getMaxBr() const ;
+
     Pixel getPixel(uint x, uint y);
 
     Pixel getPixel(uint x, uint y, double gamma);
