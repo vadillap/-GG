@@ -66,10 +66,11 @@ public:
 };
 
 
-void drawLine(double x0, double y0, double x1, double y1, PnmFile &pnm, double thick, double gamma, unsigned int br) {
+void drawLine(double x0, double y0, double x1, double y1, PnmFile &pnm, double thick, unsigned int br) {
     Line line(Vec(x0, y0), Vec(x1, y1), thick - 1);
 
-    br = floor(pnm.getMaxBr() * std::pow((double) br / pnm.getMaxBr(), gamma));
+    Pixel linePixel = pnm.getGamma()->decode(Pixel(br));
+
     const double near = std::sqrt(2) / 2;
 
     for (int i = 0; i < pnm.getWidth(); ++i) {
@@ -77,8 +78,8 @@ void drawLine(double x0, double y0, double x1, double y1, PnmFile &pnm, double t
             double distance = line.disToPoint(Vec(i, j));
             if (distance <= near) {
                 double alpha = 1 - std::max(0.0, distance) / near;
-                Pixel p = pnm.getPixel(i, j, gamma).mix(Pixel(br), alpha);
-                pnm.setPixel(i, j, p, gamma);
+                Pixel p = pnm.getPixel(i, j, true).mix(linePixel, alpha);
+                pnm.setPixel(i, j, p, true);
             }
         }
     }

@@ -25,6 +25,7 @@ int main(int argc, char *argv[]) {
     if (argc == 9 || argc == 10) {
         string fin, fout;
         int br;
+        bool altGamma = false;
         double x0, y0, x1, y1, thick, gamma = 2.2;
 
         try {
@@ -38,6 +39,7 @@ int main(int argc, char *argv[]) {
             y1 = stof(argv[8]);
             if (argc == 10) {
                 gamma = stof(argv[9]);
+                altGamma = true;
             }
         }
         catch (exception &ex) {
@@ -53,6 +55,9 @@ int main(int argc, char *argv[]) {
             return 1;
         }
 
+        if (altGamma) {
+            pnm->setGamma(new valueGamma(gamma));
+        }
         auto result = validate(x0, y0, x1, y1, thick, gamma, br, pnm->getWidth(), pnm->getHeight());
 
         if (!result.first) {
@@ -60,7 +65,7 @@ int main(int argc, char *argv[]) {
             return 1;
         }
 
-        drawLine(x0, y0, x1, y1, *pnm, thick, gamma, br);
+        drawLine(x0, y0, x1, y1, *pnm, thick, br);
 
         try {
             pnm->savePnm(fout);
