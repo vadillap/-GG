@@ -1,3 +1,4 @@
+#include <iostream>
 #include "PnmLine.h"
 
 struct Vec {
@@ -28,6 +29,14 @@ public:
 
     Vec resize(double l) const {
         return Vec((x / len()) * l, (y / len()) * l);
+    }
+
+    double getX() const {
+        return x;
+    }
+
+    double getY() const {
+        return y;
     }
 
     double len() const {
@@ -62,6 +71,18 @@ public:
         }
     }
 
+    double k() {
+        double dx = (a.getX() - b.getX());
+        double dy = (a.getY() - b.getY());
+
+        if (dy == 0) return 0.5;
+        if (dx == 0) return 0.5;
+
+        double d = dy / dx;
+        if (d <= 1) d -= 2;
+        return 0.5 * std::sqrt(1 / (d * d) + 1);
+    }
+
 
 };
 
@@ -71,7 +92,7 @@ void drawLine(double x0, double y0, double x1, double y1, PnmFile &pnm, double t
 
     Pixel linePixel = pnm.getGamma()->decode(Pixel(br));
 
-    const double near = std::sqrt(2) / 2;
+    const double near = 2 * line.k();
 
     for (int i = 0; i < pnm.getWidth(); ++i) {
         for (int j = 0; j < pnm.getHeight(); ++j) {

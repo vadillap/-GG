@@ -28,7 +28,7 @@ public:
 
 class srgbGamma : public Gamma {
 private:
-    double matrix1[9], matrix2[9], a1, a2;
+    double a1, a2;
 
     double f_enc(double c);
 
