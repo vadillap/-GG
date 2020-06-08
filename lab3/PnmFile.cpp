@@ -6,9 +6,9 @@
 
 
 PnmFile::PnmFile(uint w, uint h) : w(w), h(h) {
-    type = '6';
+    type = '5';
     max_value = 255;
-    data = (uint8_t *) malloc(sizeof(uint8_t) * w * h * 3);
+    data = (uint8_t *) malloc(sizeof(uint8_t) * w * h);
     g = new srgbGamma();
 }
 
