@@ -1,5 +1,5 @@
 #include "PnmDithering.h"
-#include <random>
+#include <vector>
 
 int findNearestPaletteColor(int color, int bit) {
     int res = 0;
@@ -16,7 +16,7 @@ void RandomDithering::dither(PnmFile &pnm, uint bit) {
             double l = 0, r = 255;
             for (int k = 0; k < bit; ++k) {
 
-                if (p.avg() > l + (random() % int(r - l))) {
+                if (p.avg() > l + (rand() % int(r - l))) {
                     l = (r + l) / 2;
                 } else {
                     r = (r + l) / 2;

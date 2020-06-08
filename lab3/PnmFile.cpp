@@ -1,6 +1,7 @@
 #include <fstream>
 #include <cmath>
 #include <stdexcept>
+#include <cassert>
 #include "PnmFile.h"
 
 

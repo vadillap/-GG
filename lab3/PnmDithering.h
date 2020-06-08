@@ -25,6 +25,7 @@ private:
             };
 public:
     OrderedDithering();
+
     void dither(PnmFile &pnm, uint bit) override;
 };
 

@@ -49,7 +49,8 @@ void cli(int argc, char *argv[]) {
         }
 
         if (gradient) {
-            *pnm = makeGradient(pnm->getWidth(), pnm->getHeight());
+            pnm = new PnmFile(pnm->getWidth(), pnm->getHeight());
+            makeGradient(*pnm);
         }
         auto result = validate(dithering, bit, gamma);
 
