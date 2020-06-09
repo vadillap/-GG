@@ -2,6 +2,8 @@
 #include <vector>
 
 int findNearestPaletteColor(int color, int bit) {
+    color = std::max(0, color);
+    color = std::min(255, color);
     int res = 0;
     for (int i = 0; i < 8; ++i) {
         res += ((color >> (7 - (i % bit))) % 2) << (7 - i);
@@ -13,21 +15,12 @@ void RandomDithering::dither(PnmFile &pnm, uint bit) {
     for (int i = 0; i < pnm.getWidth(); ++i) {
         for (int j = 0; j < pnm.getHeight(); ++j) {
             Pixel p = pnm.getPixel(i, j, true);
-            double l = 0, r = 255;
-            for (int k = 0; k < bit; ++k) {
+            double color = findNearestPaletteColor(
+                    p.avg() + (255 / (1 << (bit - 1))) * ((rand() % (1000000000)) / 1000000000.0 - 0.5),
+                    bit
+            );
 
-                if (p.avg() > l + (rand() % int(r - l))) {
-                    l = (r + l) / 2;
-                } else {
-                    r = (r + l) / 2;
-                }
-            }
-            double a = (1 << bit);
-            double b = (255.0 / a) * (a - 1);
-
-            l = 255 * (double) l / b;
-
-            pnm.setPixel(i, j, Pixel(l), true);
+            pnm.setPixel(i, j, Pixel(color), true);
         }
     }
 }
@@ -36,7 +29,8 @@ void OrderedDithering::dither(PnmFile &pnm, uint bit) {
     for (int i = 0; i < pnm.getWidth(); ++i) {
         for (int j = 0; j < pnm.getHeight(); ++j) {
             Pixel p = pnm.getPixel(i, j, true);
-            double color = findNearestPaletteColor(p.avg() + (255 / (1 << bit)) * matrix[i % 8][j % 8], bit);
+
+            double color = findNearestPaletteColor(p.avg() + (255 / (1 << (bit - 1))) * matrix[j % 8][i % 8], bit);
             pnm.setPixel(i, j, Pixel(color), true);
         }
     }
@@ -66,17 +60,22 @@ void FloydDithering::dither(PnmFile &pnm, uint bit) {
             if (i + 1 < pnm.getWidth()) {
                 bias[i + 1] += d / 16;
             }
-            bias[i] = d * 5 / 16;
+            bias[i] += d * 5 / 16;
             next = d * 7 / 16;
 
             pnm.setPixel(i, j, Pixel(new_value), true);
         }
-        std::swap(bias, now);
-        bias.clear();
-        next = 0;
+        swap(bias, now);
+        bias = std::vector<double>(pnm.getWidth());
     }
 }
 
 void NoDithering::dither(PnmFile &pnm, uint bit) {
-
+    for (int i = 0; i < pnm.getWidth(); ++i) {
+        for (int j = 0; j < pnm.getHeight(); ++j) {
+            Pixel p = pnm.getPixel(i, j, true);
+            double color = findNearestPaletteColor(p.avg(), bit);
+            pnm.setPixel(i, j, Pixel(color), true);
+        }
+    }
 }
