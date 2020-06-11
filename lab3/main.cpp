@@ -65,7 +65,7 @@ void cli(int argc, char *argv[]) {
                 d = new NoDithering();
                 break;
             case 1:
-                d  = new OrderedDithering();
+                d = new BayerDithering();
                 break;
             case 2:
                 d = new RandomDithering();
@@ -73,10 +73,22 @@ void cli(int argc, char *argv[]) {
             case 3:
                 d = new FloydDithering();
                 break;
+            case 4:
+                d = new JJNDithering();
+                break;
+            case 5:
+                d = new SierraDithering();
+                break;
+            case 6:
+                d = new AtkinsonDithering();
+                break;
+            case 7:
+                d = new HalftoneDithering();
+                break;
         }
 
         d->dither(*pnm, bit);
-        
+
         try {
             pnm->savePnm(fout);
         }
@@ -84,8 +96,7 @@ void cli(int argc, char *argv[]) {
             cerr << "file write error:" << ex.what() << '\n';
             exit(1);
         }
-    }
-    else {
+    } else {
         cerr << "program.exe <имя_входного_файла> <имя_выходного_файла> <градиент> <дизеринг> <битность> <гамма>\n";
         exit(1);
     }
