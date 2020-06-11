@@ -76,7 +76,7 @@ void cli(int argc, char *argv[]) {
         }
 
         d->dither(*pnm, bit);
-
+        
         try {
             pnm->savePnm(fout);
         }

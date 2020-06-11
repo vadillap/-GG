@@ -1,5 +1,12 @@
 #include "PnmDithering.h"
 #include <vector>
+#include <algorithm>
+#include <iostream>
+
+double randZeroToOne()
+{
+    return rand() / (RAND_MAX + 1.);
+}
 
 int findNearestPaletteColor(int color, int bit) {
     color = std::max(0, color);
@@ -15,11 +22,11 @@ void RandomDithering::dither(PnmFile &pnm, uint bit) {
     for (int i = 0; i < pnm.getWidth(); ++i) {
         for (int j = 0; j < pnm.getHeight(); ++j) {
             Pixel p = pnm.getPixel(i, j, true);
-            double color = findNearestPaletteColor(
-                    p.avg() + (255 / (1 << (bit - 1))) * ((rand() % (1000000000)) / 1000000000.0 - 0.5),
+            double k = randZeroToOne() - 0.5;
+            int color = findNearestPaletteColor(
+                    p.avg() + (255 / bit) * k,
                     bit
             );
-
             pnm.setPixel(i, j, Pixel(color), true);
         }
     }
@@ -30,7 +37,7 @@ void OrderedDithering::dither(PnmFile &pnm, uint bit) {
         for (int j = 0; j < pnm.getHeight(); ++j) {
             Pixel p = pnm.getPixel(i, j, true);
 
-            double color = findNearestPaletteColor(p.avg() + (255 / (1 << (bit - 1))) * matrix[j % 8][i % 8], bit);
+            double color = findNearestPaletteColor(p.avg() + (255 / bit) * matrix[j % 8][i % 8], bit);
             pnm.setPixel(i, j, Pixel(color), true);
         }
     }
