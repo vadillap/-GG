@@ -30,7 +30,7 @@ void countColors(PnmFile &f) {
 void makeGradient(PnmFile &res) {
     for (int i = 0; i < res.getWidth(); ++i) {
         for (int j = 0; j < res.getHeight(); ++j) {
-            Pixel p(255 * i / res.getWidth());
+            Pixel p(255 * i / (res.getWidth() - 1));
             res.setPixel(i, j, p, true);
         }
     }
