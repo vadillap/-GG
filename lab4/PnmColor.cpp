@@ -3,6 +3,7 @@
 //
 
 #include <cmath>
+#include <algorithm>
 #include "PnmColor.h"
 
 void transformCS(PnmFile &pnm, Color &from, Color &to) {

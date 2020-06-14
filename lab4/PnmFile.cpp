@@ -96,15 +96,15 @@ void PnmFile::savePnm(const std::string &path) {
 
 Pixel PnmFile::getPixel(uint x, uint y, bool gamma) {
     uint pos = w * y + x;
-    Pixel *res;
+    Pixel res(0);
     if (type == '6') {
-        res = new Pixel(
+        res = Pixel(
                 data[pos * 3],
                 data[pos * 3 + 1],
                 data[pos * 3 + 2]
         );
     } else {
-        res = new Pixel(
+        res = Pixel(
                 data[pos],
                 data[pos],
                 data[pos]
@@ -112,9 +112,9 @@ Pixel PnmFile::getPixel(uint x, uint y, bool gamma) {
     }
 
     if (gamma) {
-        return g->decode(*res);
+        return g->decode(res);
     }
-    return *res;
+    return res;
 }
 
 void PnmFile::setPixel(uint x, uint y, Pixel p, bool gamma) {
