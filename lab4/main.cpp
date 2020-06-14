@@ -38,7 +38,7 @@ void save_pnm(string name, PnmFile *pnm) {
 }
 
 string part_name(string name, int part) {
-    name.insert(name.find('.'), "_" + to_string(part));
+    name.insert(name.rfind('.'), "_" + to_string(part));
     return name;
 }
 
