@@ -40,11 +40,10 @@ void split_pnm(PnmFile &source, PnmFile &r, PnmFile &g, PnmFile &b) {
     }
 }
 
-PnmFile fillColor(int w, int h) {
-    PnmFile res(w, h);
+PnmFile fillColor(int w, int h, Pixel p) {
+    PnmFile res(w, h, '6');
     for (int i = 0; i < res.getWidth(); ++i) {
         for (int j = 0; j < res.getHeight(); ++j) {
-            Pixel p(255);
             res.setPixel(i, j, p);
         }
     }

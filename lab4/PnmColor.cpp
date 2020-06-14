@@ -6,6 +6,12 @@
 #include <algorithm>
 #include "PnmColor.h"
 
+int strip_value(double v) {
+    if (v > 255.) return 255;
+    if (v < 0.) return 0;
+    return floor(v);
+}
+
 void transformCS(PnmFile &pnm, Color &from, Color &to) {
     for (int i = 0; i < pnm.getWidth(); ++i) {
         for (int j = 0; j < pnm.getHeight(); ++j) {
@@ -98,13 +104,23 @@ Pixel CMYColor::fromRGB(Pixel p) {
 }
 
 Pixel YOGColor::toRGB(Pixel p) {
-    double r = p.r, g = p.g, b = p.b;
-    return Pixel(r + g - b, r + b, r - g - b);
+    double y = p.r / 255.0, co = p.g / 255.0 - 0.5, cg = p.b / 255.0 - 0.5;
+
+    double r = y + co - cg;
+    double g = y + cg;
+    double b = y - co - cg;
+
+    return Pixel(strip_value(255 * r), strip_value(255 * g), strip_value(255 * b));
 }
 
 Pixel YOGColor::fromRGB(Pixel p) {
-    double r = p.r, g = p.g, b = p.b;
-    return Pixel(r / 4 + g / 2 + b / 4, r / 2 - b / 2, -r / 4 + g / 2 - b / 4);
+    double r = p.r / 255.0, g = p.g / 255.0, b = p.b / 255.0;
+
+    double y = r / 4 + g / 2 + b / 4;
+    double co = r / 2 - b / 2;
+    double cg = -r / 4 + g / 2 - b / 4;
+
+    return Pixel(strip_value(255 * y), strip_value(255 * (co + 0.5)), strip_value(255 * (cg + 0.5)));
 }
 
 Pixel YBR709Color::toRGB(Pixel p) {
@@ -114,7 +130,7 @@ Pixel YBR709Color::toRGB(Pixel p) {
     double g = y - 0.34414 * (cb - 128) - 0.71414 * (cr - 128);
     double b = y + 1.772 * (cb - 128);
 
-    return Pixel(r, g, b);
+    return Pixel(strip_value(r), strip_value(g), strip_value(b));
 }
 
 Pixel YBR709Color::fromRGB(Pixel p) {
@@ -124,7 +140,7 @@ Pixel YBR709Color::fromRGB(Pixel p) {
     double cb = 128 - 0.168736 * r - 0.331264 * g + 0.5 * b;
     double cr = 128 + 0.5 * r - 0.418688 * g - 0.081312 * b;
 
-    return Pixel(y, cb, cr);
+    return Pixel(strip_value(y), strip_value(cb), strip_value(cr));
 }
 
 Pixel YBR601Color::toRGB(Pixel p) {
@@ -134,7 +150,7 @@ Pixel YBR601Color::toRGB(Pixel p) {
     double g = 298.082 * y - 100.291 * cb - 208.120 * cr + 135.576;
     double b = 298.082 * y + 516.412 * cb - 276.836;
 
-    return Pixel(r, g, b);
+    return Pixel(strip_value(r), strip_value(g), strip_value(b));
 }
 
 Pixel YBR601Color::fromRGB(Pixel p) {
@@ -144,7 +160,7 @@ Pixel YBR601Color::fromRGB(Pixel p) {
     double cb = 128 - 37.945 * r - 74.494 * g + 112.439 * b;
     double cr = 128 + 112.439 * r - 94.154 * g - 18.285 * b;
 
-    return Pixel(y, cb, cr);
+    return Pixel(strip_value(y), strip_value(cb), strip_value(cr));
 }
 
 Pixel HSVColor::toRGB(Pixel p) {
