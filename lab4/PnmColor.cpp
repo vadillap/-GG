@@ -124,43 +124,51 @@ Pixel YOGColor::fromRGB(Pixel p) {
 }
 
 Pixel YBR709Color::toRGB(Pixel p) {
-    double y = p.r, cb = p.g, cr = p.b;
+    double y = p.r / 255.0, cb = p.g / 255.0 - 0.5, cr = p.b / 255.0 - 0.5;
 
-    double r = y + 1.402 * (cr - 128);
-    double g = y - 0.34414 * (cb - 128) - 0.71414 * (cr - 128);
-    double b = y + 1.772 * (cb - 128);
+    double kb = 0.0722, kr = 0.2126, kg = 0.7152;
 
-    return Pixel(strip_value(r), strip_value(g), strip_value(b));
+    double r = y + cr * (2 - 2 * kr);
+    double g = y - cb * (kb / kg) * (2 - 2 * kb) - cr * (kr / kg) * (2 - 2 * kr);
+    double b = y + cb * (2 - 2 * kb);
+
+    return Pixel(strip_value(255 * r), strip_value(255 * g), strip_value(255 * b));
 }
 
 Pixel YBR709Color::fromRGB(Pixel p) {
-    double r = p.r, g = p.g, b = p.b;
+    double r = p.r / 255.0, g = p.g / 255.0, b = p.b / 255.0;
 
-    double y = 0.299 * r + 0.587 * g + 0.114 * b;
-    double cb = 128 - 0.168736 * r - 0.331264 * g + 0.5 * b;
-    double cr = 128 + 0.5 * r - 0.418688 * g - 0.081312 * b;
+    double kb = 0.0722, kr = 0.2126, kg = 0.7152;
 
-    return Pixel(strip_value(y), strip_value(cb), strip_value(cr));
+    double y = r * kr + g * kg + b * kb;
+    double cb = (b - y) / (2.0 * (1.0 - kb));
+    double cr = (r - y) / (2.0 * (1.0 - kr));
+
+    return Pixel(strip_value(255 * y), strip_value(255 * (cb + 0.5)), strip_value(255 * (cr + 0.5)));
 }
 
 Pixel YBR601Color::toRGB(Pixel p) {
-    double y = p.r / 256.0, cb = p.g / 256.0, cr = p.b / 256.0;
+    double y = p.r / 255.0, cb = p.g / 255.0 - 0.5, cr = p.b / 255.0 - 0.5;
 
-    double r = 298.082 * y + 408.583 * cr - 222.921;
-    double g = 298.082 * y - 100.291 * cb - 208.120 * cr + 135.576;
-    double b = 298.082 * y + 516.412 * cb - 276.836;
+    double kr = 0.299, kg = 0.587, kb = 0.114;
 
-    return Pixel(strip_value(r), strip_value(g), strip_value(b));
+    double r = y + cr * (2 - 2 * kr);
+    double g = y - cb * (kb / kg) * (2 - 2 * kb) - cr * (kr / kg) * (2 - 2 * kr);
+    double b = y + cb * (2 - 2 * kb);
+
+    return Pixel(strip_value(255 * r), strip_value(255 * g), strip_value(255 * b));
 }
 
 Pixel YBR601Color::fromRGB(Pixel p) {
-    double r = p.r / 256.0, g = p.g / 256.0, b = p.b / 256.0;
+    double r = p.r / 255.0, g = p.g / 255.0, b = p.b / 255.0;
 
-    double y = 16 + 65.738 * r + 129.057 * g + 25.064 * b;
-    double cb = 128 - 37.945 * r - 74.494 * g + 112.439 * b;
-    double cr = 128 + 112.439 * r - 94.154 * g - 18.285 * b;
+    double kr = 0.299, kg = 0.587, kb = 0.114;
 
-    return Pixel(strip_value(y), strip_value(cb), strip_value(cr));
+    double y = r * kr + g * kg + b * kb;
+    double cb = (b - y) / (2.0 * (1.0 - kb));
+    double cr = (r - y) / (2.0 * (1.0 - kr));
+
+    return Pixel(strip_value(255 * y), strip_value(255 * (cb + 0.5)), strip_value(255 * (cr + 0.5)));
 }
 
 Pixel HSVColor::toRGB(Pixel p) {

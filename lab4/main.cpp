@@ -154,5 +154,4 @@ void cli(int argc, char *argv[]) {
 
 int main(int argc, char *argv[]) {
     cli(argc, argv);
-    return 0;
 }
